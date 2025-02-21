@@ -1,0 +1,58 @@
+import java.lang.constant.Constable;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.List;
+
+public class Main {
+    public static void main(String[] args) {
+    }
+
+    public void findFreeTimeSlots() throws SQLException {
+        DatabaseConnection connection = new DatabaseConnection();
+        List<Timeslot> timeslots = connection.getAvailableTimeslots("Main Hall");
+        for (Timeslot timeslot : timeslots) {
+            LocalDate date = timeslot.getStartTime().toLocalDate();
+            System.out.println("Timeslot on " + date + " from " + timeslot.getStartTime().toLocalTime() +
+                    " to " + timeslot.getEndTime().toLocalTime() + " is available.");
+        }
+    }
+
+    public void bookFreeTimeSlots() throws SQLException {
+        DatabaseConnection connection = new DatabaseConnection();
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Please enter the ID of the timeslot you'd like to book: \n");
+        int timeslotid = scanner.nextInt();
+        System.out.println("Please enter the name of the Event: \n");
+        String eventName = scanner.next();
+        connection.bookTimeslot(timeslotid, eventName);
+    }
+
+    public void getEventFianceData(int eventID) throws SQLException {
+        DatabaseConnection connection = new DatabaseConnection();
+        List<Seat> seats =  connection.getBookedSeats(eventID);
+        double cost = connection.getEventCost(eventID);
+        double revenue = 0;
+        for (Seat seat : seats) {
+            revenue += seat.getPrice();
+        }
+        System.out.println("Total seats sold for this event is: " + seats.size());
+        System.out.println("Revenue: " + revenue);
+        if (cost > 0) {
+            System.out.println("Profit: " + (revenue-cost));
+        }
+    }
+
+    public void logCosts(int eventID) throws SQLException {
+        DatabaseConnection connection = new DatabaseConnection();
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Please enter cost of the event: \n");
+        double cost = scanner.nextDouble();
+        connection.logEventCost(eventID, cost);
+    }
+    
+}
