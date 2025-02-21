@@ -81,4 +81,8 @@ public class Main {
         connection.reserveMeetingRoom(meetingRoomID);
     }
 
+    public String fetchOnlineAPIReviews() throws SQLException {
+        return null;
+    }
+
 }
