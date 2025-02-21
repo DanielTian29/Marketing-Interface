@@ -1,15 +1,51 @@
-import java.lang.constant.Constable;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.List;
 
 public class Main {
-    public static void main(String[] args) {
+    public void main() throws SQLException {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Please select what you would like from the following " +
+                "options:\n1.Get available time slots. \n2.Book time slots.\n" +
+                "3.Get an events financial data. \n4.Log event cost.\n" +
+                "5.Get daily report. \n6.Get free meeting rooms." +
+                "\n7.Reserve a meeting room \n8.Get online reviews");
+        String response = scanner.nextLine();
+        while (!response.equals("stop")) {
+
+            if (response.equals("1")) {
+                findFreeTimeSlots();
+            }
+
+            if (response.equals("2")) {
+                bookFreeTimeSlots();
+            }
+            if (response.equals("3")) {
+                getEventFianceData();
+            }
+            if (response.equals("4")) {
+                logCosts();
+            }
+            if (response.equals("5")) {
+               getDailyReport();
+            }
+            if (response.equals("6")) {
+                getFreeMeetingRooms();
+            }
+            if (response.equals("7")) {
+                bookMeetingRoom();
+            }
+            if (response.equals("8")) {
+                fetchOnlineAPIReviews();
+            }
+            System.out.println("Please select what you would like from the following " +
+                    "options:\n1.Get available time slots. \n2.Book time slots.\n" +
+                    "3.Get an events financial data. \n4.Log event cost.\n" +
+                    "5.Get daily report. \n6.Get free meeting rooms." +
+                    "\n7.Reserve a meeting room \n8.Get online reviews");
+            response = scanner.nextLine();
+        }
     }
 
     public void findFreeTimeSlots() throws SQLException {
@@ -32,8 +68,11 @@ public class Main {
         connection.bookTimeslot(timeslotid, eventName);
     }
 
-    public void getEventFianceData(int eventID) throws SQLException {
+    public void getEventFianceData() throws SQLException {
+        Scanner scanner = new Scanner(System.in);
         DatabaseConnection connection = new DatabaseConnection();
+        System.out.println("Please enter the ID of the event you'd like to look at: \n");
+        int eventID = scanner.nextInt();
         List<Seat> seats =  connection.getBookedSeats(eventID);
         double venuePrice = connection.getVenuePrice(eventID);
         double cost = connection.getEventCost(eventID);
@@ -52,11 +91,13 @@ public class Main {
         }
     }
 
-    public void logCosts(int eventID) throws SQLException {
+    public void logCosts() throws SQLException {
         DatabaseConnection connection = new DatabaseConnection();
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter cost of the event: \n");
         double cost = scanner.nextDouble();
+        System.out.println("Please enter the ID of the event you'd like to look at: \n");
+        int eventID = scanner.nextInt();
         connection.logEventCost(eventID, cost);
     }
 
@@ -70,6 +111,16 @@ public class Main {
             System.out.println("Meeting room name: " + meetingRoom.getName()
                     + "\nMeeting room capcity: " + meetingRoom.getCapacity() +
                     "\nMeeting room ID: " + meetingRoom.getmeetingRoomID());
+        }
+    }
+
+    public void getFreeMeetingRooms() throws SQLException {
+        DatabaseConnection connection = new DatabaseConnection();
+        List<MeetingRoom> meetingRoomList = connection.getAvailableMeetingRooms();
+        System.out.println("These meeting rooms are free: ");
+        for (MeetingRoom meetingRoom : meetingRoomList) {
+            System.out.println("This meeting room with the id: " + meetingRoom.getmeetingRoomID() +
+                    "named: " + meetingRoom.getName() + "with a capacity of: " + meetingRoom.getCapacity());
         }
     }
 

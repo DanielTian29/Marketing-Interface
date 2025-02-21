@@ -26,9 +26,9 @@ public class DatabaseConnection {
                 "ORDER BY startTime ASC;";
 
         try (Connection conn = connectToDatabase();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, name);
-            try (ResultSet rs = pstmt.executeQuery()) {
+             PreparedStatement p = conn.prepareStatement(sql)) {
+            p.setString(1, name);
+            try (ResultSet rs = p.executeQuery()) {
                 while (rs.next()) {
                     Timeslot timeslot = new Timeslot(
                             rs.getInt("timeslotId"),
@@ -54,13 +54,12 @@ public class DatabaseConnection {
         String insertEvent = "INSERT INTO Events (name, timeslotId) VALUES (?, ?, ?);";
 
         try {Connection conn = connectToDatabase();
-            // Start transaction
             conn.setAutoCommit(false);
 
             // Update timeslot
-            try (PreparedStatement pstmt = conn.prepareStatement(updateTimeslot)) {
-                pstmt.setInt(1, timeslotId);
-                int affectedRows = pstmt.executeUpdate();
+            try (PreparedStatement p = conn.prepareStatement(updateTimeslot)) {
+                p.setInt(1, timeslotId);
+                int affectedRows = p.executeUpdate();
                 if (affectedRows == 0) {
                     conn.rollback(); // Rollback if no rows are updated (timeslot already booked or does not exist)
                     return false;
@@ -68,10 +67,10 @@ public class DatabaseConnection {
             }
 
             // Insert event
-            try (PreparedStatement pstmt = conn.prepareStatement(insertEvent)) {
-                pstmt.setString(1, eventName);
-                pstmt.setInt(2, timeslotId);
-                pstmt.executeUpdate();
+            try (PreparedStatement p = conn.prepareStatement(insertEvent)) {
+                p.setString(1, eventName);
+                p.setInt(2, timeslotId);
+                p.executeUpdate();
             }
 
             // Commit transaction
@@ -119,9 +118,9 @@ public class DatabaseConnection {
         String sql = "SELECT cost FROM Events WHERE event_id = ?";
 
         try (Connection conn = connectToDatabase();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, eventId);
-            try (ResultSet rs = pstmt.executeQuery()) {
+             PreparedStatement p = conn.prepareStatement(sql)) {
+            p.setInt(1, eventId);
+            try (ResultSet rs = p.executeQuery()) {
                 if (rs.next()) {
                     return rs.getDouble("cost");
                 } else {
@@ -137,11 +136,11 @@ public class DatabaseConnection {
     public boolean logEventCost(int eventId, double cost) throws SQLException {
         String sql = "INSERT INTO EventCosts (eventId, cost) VALUES (?, ?);";
         try (Connection conn = connectToDatabase();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, eventId);
-            pstmt.setDouble(2, cost);
+             PreparedStatement p = conn.prepareStatement(sql)) {
+            p.setInt(1, eventId);
+            p.setDouble(2, cost);
 
-            int affectedRows = pstmt.executeUpdate();
+            int affectedRows = p.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {
             System.err.println("Error logging event cost: " + e.getMessage());
@@ -153,9 +152,9 @@ public class DatabaseConnection {
         String sql = "SELECT price FROM Venue WHERE venue_id = ?";
 
         try (Connection conn = connectToDatabase();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, venueId);
-            try (ResultSet rs = pstmt.executeQuery()) {
+             PreparedStatement p = conn.prepareStatement(sql)) {
+            p.setInt(1, venueId);
+            try (ResultSet rs = p.executeQuery()) {
                 if (rs.next()) {
                     return rs.getDouble("price");
                 } else {
@@ -219,8 +218,8 @@ public class DatabaseConnection {
         String sql = "SELECT * FROM MeetingRooms WHERE booked = FALSE AND start_time >= CURRENT_DATE AND start_time < CURRENT_DATE + INTERVAL '1' DAY";
 
         try (Connection conn = connectToDatabase();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            try (ResultSet rs = pstmt.executeQuery()) {
+             PreparedStatement p = conn.prepareStatement(sql)) {
+            try (ResultSet rs = p.executeQuery()) {
                 while (rs.next()) {
                     MeetingRoom meetingRoom = new MeetingRoom(
                             rs.getInt("meetingRoomID"),
@@ -243,10 +242,10 @@ public class DatabaseConnection {
         String sql = "UPDATE MeetingRooms SET booked = TRUE WHERE meetingRoomID = ? AND booked = FALSE;";
 
         try (Connection conn = connectToDatabase();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, meetingRoomId);
+             PreparedStatement p = conn.prepareStatement(sql)) {
+            p.setInt(1, meetingRoomId);
 
-            int affectedRows = pstmt.executeUpdate();
+            int affectedRows = p.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {
             System.err.println("Error reserving meeting room: " + e.getMessage());
