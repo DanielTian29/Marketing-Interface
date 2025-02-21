@@ -3,7 +3,8 @@ import java.time.LocalDate;
 import java.util.Scanner;
 import java.util.List;
 
-public class Main {
+public class Main implements MainInterface {
+    @Override
     public void main() throws SQLException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please select what you would like from the following " +
@@ -17,7 +18,6 @@ public class Main {
             if (response.equals("1")) {
                 findFreeTimeSlots();
             }
-
             if (response.equals("2")) {
                 bookFreeTimeSlots();
             }
@@ -48,6 +48,7 @@ public class Main {
         }
     }
 
+    @Override
     public void findFreeTimeSlots() throws SQLException {
         DatabaseConnection connection = new DatabaseConnection();
         List<Timeslot> timeslots = connection.getAvailableTimeslots("Main Hall");
@@ -58,6 +59,7 @@ public class Main {
         }
     }
 
+    @Override
     public void bookFreeTimeSlots() throws SQLException {
         DatabaseConnection connection = new DatabaseConnection();
         Scanner scanner = new Scanner(System.in);
@@ -68,6 +70,7 @@ public class Main {
         connection.bookTimeslot(timeslotid, eventName);
     }
 
+    @Override
     public void getEventFianceData() throws SQLException {
         Scanner scanner = new Scanner(System.in);
         DatabaseConnection connection = new DatabaseConnection();
@@ -91,6 +94,7 @@ public class Main {
         }
     }
 
+    @Override
     public void logCosts() throws SQLException {
         DatabaseConnection connection = new DatabaseConnection();
         Scanner scanner = new Scanner(System.in);
@@ -101,6 +105,7 @@ public class Main {
         connection.logEventCost(eventID, cost);
     }
 
+    @Override
     public void getDailyReport() throws SQLException {
         System.out.println("Here's the Daily report: ");
         DatabaseConnection connection = new DatabaseConnection();
@@ -114,6 +119,7 @@ public class Main {
         }
     }
 
+    @Override
     public void getFreeMeetingRooms() throws SQLException {
         DatabaseConnection connection = new DatabaseConnection();
         List<MeetingRoom> meetingRoomList = connection.getAvailableMeetingRooms();
@@ -124,6 +130,7 @@ public class Main {
         }
     }
 
+    @Override
     public void bookMeetingRoom() throws SQLException {
         DatabaseConnection connection = new DatabaseConnection();
         Scanner scanner = new Scanner(System.in);
@@ -132,6 +139,7 @@ public class Main {
         connection.reserveMeetingRoom(meetingRoomID);
     }
 
+    @Override
     public String fetchOnlineAPIReviews() throws SQLException {
         return null;
     }

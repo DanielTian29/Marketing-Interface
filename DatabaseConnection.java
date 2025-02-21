@@ -2,8 +2,9 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DatabaseConnection {
+public class DatabaseConnection implements DatabaseConnectionInterface {
     //connect to the database
+    @Override
     public Connection connectToDatabase() {
         String url = "jdbc:mysql://sst-stuproj.city.ac.uk:3306/in2033t08";
         String user = "";
@@ -16,6 +17,7 @@ public class DatabaseConnection {
         }
     }
     //get all the timeslots where you can book events
+    @Override
     public List<Timeslot> getAvailableTimeslots(String name) throws SQLException {
         List<Timeslot> availableTimeslots = new ArrayList<>();
         String sql = "SELECT timeslotId, venueId, startTime, endTime, isBooked " +
@@ -47,6 +49,7 @@ public class DatabaseConnection {
         return availableTimeslots;
     }
     //book the time slots
+    @Override
     public boolean bookTimeslot(int timeslotId, String eventName) throws SQLException {
         String updateTimeslot = "UPDATE Timeslot SET isBooked = true WHERE timeslotId = ? AND isBooked = false;";
         String insertEvent = "INSERT INTO Events (name, timeslotId) VALUES (?, ?, ?);";
@@ -73,6 +76,7 @@ public class DatabaseConnection {
         }
     }
     //get all the booked seats for finances
+    @Override
     public List<Seat> getBookedSeats(int eventId) throws SQLException {
         List<Seat> availableSeats = new ArrayList<>();
         String sql = "SELECT s.* FROM Seats s JOIN Events e ON s.venue_id = e.venue_id " +
@@ -103,6 +107,7 @@ public class DatabaseConnection {
         return availableSeats;
     }
     //get the cost of the event
+    @Override
     public double getEventCost(int eventId) throws SQLException {
         String sql = "SELECT cost FROM Events WHERE event_id = ?";
         try (Connection conn = connectToDatabase();
@@ -121,6 +126,7 @@ public class DatabaseConnection {
         }
     }
     //log the costs of the event
+    @Override
     public boolean logEventCost(int eventId, double cost) throws SQLException {
         String sql = "INSERT INTO EventCosts (eventId, cost) VALUES (?, ?);";
         try (Connection conn = connectToDatabase();
@@ -135,6 +141,7 @@ public class DatabaseConnection {
         }
     }
     //get the amount the venue was booked for
+    @Override
     public double getVenuePrice(int venueId) throws SQLException {
         String sql = "SELECT price FROM Venue WHERE venue_id = ?";
         try (Connection conn = connectToDatabase();
@@ -153,6 +160,7 @@ public class DatabaseConnection {
         }
     }
     //Need this to make the daily planner
+    @Override
     public void getTodayEventsWithAvailableSeating() throws SQLException {
         String eventsSql = "SELECT id, name, start_time, end_time FROM Venues WHERE start_time >= CURRENT_DATE AND start_time < CURRENT_DATE + INTERVAL '1' DAY";
         try (Connection conn = connectToDatabase();
@@ -192,6 +200,7 @@ public class DatabaseConnection {
         }
     }
     //get all the free meeting rooms
+    @Override
     public List<MeetingRoom> getAvailableMeetingRooms() throws SQLException {
         List<MeetingRoom> meetingRoomList = new ArrayList<>();
         String sql = "SELECT * FROM MeetingRooms WHERE booked = FALSE AND start_time >= CURRENT_DATE AND start_time < CURRENT_DATE + INTERVAL '1' DAY";
@@ -216,6 +225,7 @@ public class DatabaseConnection {
         return meetingRoomList;
     }
     //reserve the meeting room
+    @Override
     public boolean reserveMeetingRoom(int meetingRoomId) {
         String sql = "UPDATE MeetingRooms SET booked = TRUE WHERE meetingRoomID = ? AND booked = FALSE;";
         try (Connection conn = connectToDatabase();
