@@ -169,9 +169,6 @@ public class DatabaseConnection {
         }
     }
 
-
-
-
     public void getTodayEventsWithAvailableSeating() throws SQLException {
         String eventsSql = "SELECT id, name, start_time, end_time FROM Venues WHERE start_time >= CURRENT_DATE AND start_time < CURRENT_DATE + INTERVAL '1' DAY";
 

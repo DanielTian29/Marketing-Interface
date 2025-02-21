@@ -35,15 +35,20 @@ public class Main {
     public void getEventFianceData(int eventID) throws SQLException {
         DatabaseConnection connection = new DatabaseConnection();
         List<Seat> seats =  connection.getBookedSeats(eventID);
+        double venuePrice = connection.getVenuePrice(eventID);
         double cost = connection.getEventCost(eventID);
         double revenue = 0;
         for (Seat seat : seats) {
             revenue += seat.getPrice();
         }
-        System.out.println("Total seats sold for this event is: " + seats.size());
-        System.out.println("Revenue: " + revenue);
+        System.out.println("Price venue has been booked for: " + venuePrice);
+        System.out.println("\nTotal seats sold for this event is: " + seats.size());
+        System.out.println("\nTotal revenue from seats: " + revenue);
         if (cost > 0) {
-            System.out.println("Profit: " + (revenue-cost));
+            System.out.println("\nTotal cost: " + cost);
+            System.out.println("\nProfit: " + ((revenue + venuePrice) -cost));
+        }else {
+            System.out.println("\nTotal revenue: " + (revenue+venuePrice));
         }
     }
 
