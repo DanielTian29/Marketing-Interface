@@ -54,5 +54,26 @@ public class Main {
         double cost = scanner.nextDouble();
         connection.logEventCost(eventID, cost);
     }
-    
+
+    public void getDailyReport() throws SQLException {
+        System.out.println("Here's the Daily report: ");
+        DatabaseConnection connection = new DatabaseConnection();
+        connection.getTodayEventsWithAvailableSeating();
+        List<MeetingRoom> meetingRoomList = connection.getAvailableMeetingRooms();
+        System.out.println("The following meeting rooms are free: ");
+        for (MeetingRoom meetingRoom : meetingRoomList) {
+            System.out.println("Meeting room name: " + meetingRoom.getName()
+                    + "\nMeeting room capcity: " + meetingRoom.getCapacity() +
+                    "\nMeeting room ID: " + meetingRoom.getmeetingRoomID());
+        }
+    }
+
+    public void bookMeetingRoom() throws SQLException {
+        DatabaseConnection connection = new DatabaseConnection();
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Please enter the ID of the meeting room you'd like to book: \n");
+        int meetingRoomID = scanner.nextInt();
+        connection.reserveMeetingRoom(meetingRoomID);
+    }
+
 }
